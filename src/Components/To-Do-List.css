@@ -228,11 +228,12 @@
 
 .empty-image {
   margin-top: 1rem;
-  width: 100px;
+  width: 200px;
   opacity: 0.8;
   border-radius: 10px;
   background: transparent;
-  margin-right: 115px;
+  margin-right: 70px;
+
 }
 
 /* ===========================

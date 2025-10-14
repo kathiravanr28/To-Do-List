@@ -1,7 +1,7 @@
 import React from "react";
 import "./To-Do-List.css";
 import { useToDoListLogic } from "./To-Do-List-Function.js";
-import emptyImage from "../assets/backgrounds/To-Do-List-image.jpg";
+import emptyImage from "../assets/backgrounds/To-Do-List-pic.jpg";
 
 function ToDoList() {
   const {
