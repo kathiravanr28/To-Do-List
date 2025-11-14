@@ -265,6 +265,30 @@
   margin-right: 70px;
 }
 
+.task-options-row {
+  margin-top: 10px;
+  width: 100%;
+  display: flex;
+  gap: 10px;
+}
+
+.task-options-row select,
+.task-options-row input[type="date"] {
+  flex: 1;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(225, 194, 209, 0.3);
+  border: none;
+  color: white;
+  outline: none;
+}
+
+.task-options-row select option {
+  background: #333;
+  color: white;
+}
+
+
 /* 🔹 Responsive Design  */
 @media (max-width: 480px) {
   .container {

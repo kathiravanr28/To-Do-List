@@ -9,16 +9,25 @@ function ToDoList() {
     index,
     tasks,
     input,
+    priority,
+    category,
+    dueDate,
+
     handleInputChange,
     handleAddTask,
     handleRemoveTask,
     handleEditTask,
     handleEditValueChange,
+    handlePriorityChange,
+    handleCategoryChange,
+    handleDueDateChange,
+
     editIndex,
     editValue,
+
     handleToggleComplete,
     isTaskListEmpty,
-    progress, // ✅ added
+    progress,
   } = useToDoListLogic();
 
   return (
@@ -29,45 +38,58 @@ function ToDoList() {
       <div className="todo-app">
         <h1>To-Do List</h1>
 
-        {/* ✅ Progress container */}
+        {/* Progress container */}
         <div className="stat-container">
           <div className="details">
             <h3>Keep it Up!</h3>
             <div id="Progressbar">
-              <div
-                id="progress"
-                style={{ width: `${progress.percent}%` }}
-              ></div>
+              <div id="progress" style={{ width: `${progress.percent}%` }}></div>
             </div>
           </div>
+
           <div className="stats-number">
-            <p id="numbers">
-              {progress.completed}/{progress.total}
-            </p>
+            <p id="numbers">{progress.completed}/{progress.total}</p>
           </div>
         </div>
 
-        {/* ✅ Input form */}
+        {/* Input form */}
         <form className="input-area" onSubmit={handleAddTask}>
           <input
             type="text"
-            id="task-input"
             placeholder="Add a new task"
             value={editIndex !== null ? editValue : input}
             onChange={editIndex !== null ? handleEditValueChange : handleInputChange}
           />
-          <button type="submit" id="add-task-btn">
+          <button type="submit">
             <i className="fa-solid fa-plus"></i>
           </button>
         </form>
 
-        {/* ✅ Task list */}
+        {/* Priority | Category | Due Date */}
+        <div className="task-options-row">
+          <select value={priority} onChange={handlePriorityChange}>
+            <option value="High">High</option>
+            <option value="Medium">Medium</option>
+            <option value="Low">Low</option>
+          </select>
+
+          <select value={category} onChange={handleCategoryChange}>
+            <option value="General">General</option>
+            <option value="Work">Work</option>
+            <option value="Personal">Personal</option>
+            <option value="Study">Study</option>
+          </select>
+
+          <input type="date" value={dueDate || ""} onChange={handleDueDateChange} />
+        </div>
+
+        {/* Task list */}
         <div className="todos-container">
           <ul className="task-list">
             {tasks.map((task, idx) => (
               <li
-                className={`task-list-item ${task.completed ? "completed" : ""}`}
                 key={idx}
+                className={`task-list-item ${task.completed ? "completed" : ""}`}
               >
                 <input
                   type="checkbox"
@@ -76,17 +98,23 @@ function ToDoList() {
                   onChange={() => handleToggleComplete(idx)}
                 />
 
-                <span className="task-text">{task.text}</span>
+                {/* Task content */}
+                <div className="task-content">
+                  <span className="task-text">{task.text}</span>
+
+                  <div className="task-meta">
+                    <span className={`priority-${task.priority.toLowerCase()}`}>
+                      {task.priority}
+                    </span>
+                    <span>{task.category}</span>
+                    {task.dueDate && <span>Due: {task.dueDate}</span>}
+                  </div>
+                </div>
 
                 <button
                   className="edit-btn"
                   onClick={() => handleEditTask(idx)}
                   disabled={task.completed}
-                  style={{
-                    opacity: task.completed ? "0.5" : "1",
-                    pointerEvents: task.completed ? "none" : "auto",
-                  }}
-                  title="Edit"
                 >
                   <i className="fa-solid fa-pen"></i>
                 </button>
@@ -94,7 +122,6 @@ function ToDoList() {
                 <button
                   className="delete-btn"
                   onClick={() => handleRemoveTask(idx)}
-                  title="Delete"
                 >
                   <i className="fa-solid fa-trash"></i>
                 </button>
