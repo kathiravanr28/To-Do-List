@@ -1,4 +1,4 @@
-/* ✅ Container background animation */
+/* Container background animation */
 .container {
   min-height: 100vh;
   width: 100%;
@@ -35,7 +35,6 @@
 
 .details{
   width: 100%;
-
 }
 .details h3{
   font-size: 1.2rem;
@@ -58,7 +57,6 @@
   background: #ff004f;
   border-radius: 20px ;
   transition: width 0.3s ease;
-
 }
 
 #numbers{
@@ -74,8 +72,7 @@
   border: 2px solid rgba(225, 194, 209, 0.3);
 }
 
-
-/* ✅ To-Do App Box */
+/* To-Do App Box  */
 .todo-app {
   width: 100%;
   max-width: 400px;
@@ -133,6 +130,7 @@
   background-color: #ff004f;
 }
 
+/* Task List */
 .todos-container {
   display: flex;
   align-items: center;
@@ -167,7 +165,7 @@
   opacity: 0.6;
 }
 
-/* ✅ Centered custom checkbox */
+/* Centered custom checkbox */
 .todo-checkbox {
   appearance: none;
   width: 22px;
@@ -203,14 +201,46 @@
   transform: translate(-50%, -50%);
 }
 
-/* Task text */
-.task-text {
+/* Task Content + Meta (New Features) */
+.task-content {
+  display: flex;
+  flex-direction: column;
   flex: 1;
   margin-left: 10px;
+}
+
+.task-text {
+  font-weight: 500;
+  font-size: 1.1rem;
   word-wrap: break-word;
 }
 
-/* Buttons */
+.task-meta {
+  font-size: 0.8rem;
+  color: #ccc;
+  margin-top: 2px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Priority color badges */
+.task-meta span.priority-high {
+  color: #ff4d4f;
+  font-weight: bold;
+}
+
+.task-meta span.priority-medium {
+  color: #ffb74d;
+  font-weight: bold;
+}
+
+.task-meta span.priority-low {
+  color: #4caf50;
+  font-weight: bold;
+}
+
+/* Edit and Delete buttons */
 .edit-btn, .delete-btn {
   background: transparent;
   border: none;
@@ -233,22 +263,21 @@
   border-radius: 10px;
   background: transparent;
   margin-right: 70px;
-
 }
 
-/* ===========================
-   🔹 SMALL PHONES (≤ 480px)
-   =========================== */
+/* 🔹 Responsive Design  */
 @media (max-width: 480px) {
   .container {
     padding: 0.5rem;
     font-size: 14px;
   }
+  .task-meta {
+    font-size: 0.7rem;
+    flex-direction: column;
+    gap: 4px;
+  }
 }
 
-/* ===========================
-   🔹 TABLETS / SMALL SCREENS (481px - 768px)
-   =========================== */
 @media (min-width: 481px) and (max-width: 768px) {
   .container {
     padding: 1rem;
@@ -256,9 +285,6 @@
   }
 }
 
-/* ===========================
-   🔹 LAPTOPS / MEDIUM SCREENS (769px - 1024px)
-   =========================== */
 @media (min-width: 769px) and (max-width: 1024px) {
   .container {
     padding: 1.5rem;
@@ -267,9 +293,6 @@
   }
 }
 
-/* ===========================
-   🔹 DESKTOPS / LARGE SCREENS (1025px - 1440px)
-   =========================== */
 @media (min-width: 1025px) and (max-width: 1440px) {
   .container {
     padding: 2rem;
@@ -277,9 +300,6 @@
   }
 }
 
-/* ===========================
-   🔹 VERY LARGE SCREENS (> 1440px)
-   =========================== */
 @media (min-width: 1441px) {
   .container {
     padding: 3rem;

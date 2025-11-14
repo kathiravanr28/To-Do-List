@@ -2,13 +2,11 @@ import { useState, useEffect } from "react";
 import confetti from "canvas-confetti";
 import { getBackgrounds, getNextBackgroundIndex } from "../utils/backgroundChanger.js";
 
-// =======================
 // Helper Functions
-// =======================
-export function addTask(tasks, newTask) {
+export function addTask(tasks, newTask, priority="Medium", dueDate=null, category="General") {
   const trimmed = newTask.trim();
   if (!trimmed) return tasks;
-  return [...tasks, { text: trimmed, completed: false }];
+  return [...tasks, { text: trimmed, completed: false, priority, dueDate, category }];
 }
 
 export function removeTask(tasks, index) {
@@ -27,7 +25,7 @@ export function isTaskListEmpty(tasks) {
 
 export function calculateProgress(tasks) {
   const total = tasks.length;
-  const completed = tasks.filter((t) => t.completed).length;
+  const completed = tasks.filter(t => t.completed).length;
   const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
   return { completed, total, percent };
 }
@@ -35,13 +33,11 @@ export function calculateProgress(tasks) {
 export function triggerConfetti() {
   const count = 200;
   const defaults = { origin: { y: 0.7 } };
-
   function fire(particleRatio, opts) {
     confetti(Object.assign({}, defaults, opts, {
       particleCount: Math.floor(count * particleRatio),
     }));
   }
-
   fire(0.25, { spread: 26, startVelocity: 55 });
   fire(0.2, { spread: 60 });
   fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 });
@@ -49,61 +45,57 @@ export function triggerConfetti() {
   fire(0.1, { spread: 120, startVelocity: 45 });
 }
 
-// =======================
 // Main Hook
-// =======================
 export function useToDoListLogic() {
   const backgrounds = getBackgrounds();
   const [index, setIndex] = useState(0);
 
-  // Load tasks from localStorage
+  // Load tasks with reset if all completed
   const [tasks, setTasks] = useState(() => {
     const saved = localStorage.getItem("tasks");
-    return saved ? JSON.parse(saved) : [];
+    if (!saved) return [];
+    const parsed = JSON.parse(saved);
+    return parsed.length > 0 && parsed.every(t => t.completed) ? [] : parsed;
   });
 
   const [input, setInput] = useState("");
+  const [priority, setPriority] = useState("Medium");
+  const [dueDate, setDueDate] = useState(null);
+  const [category, setCategory] = useState("General");
   const [editIndex, setEditIndex] = useState(null);
   const [editValue, setEditValue] = useState("");
   const [progress, setProgress] = useState({ completed: 0, total: 0, percent: 0 });
 
-  // 🔄 Change background every 10s
+  // Change background every 10s
   useEffect(() => {
-    const interval = setInterval(() => {
-      setIndex((prev) => getNextBackgroundIndex(prev));
-    }, 10000);
+    const interval = setInterval(() => setIndex(prev => getNextBackgroundIndex(prev)), 10000);
     return () => clearInterval(interval);
   }, []);
 
-  // 📊 Update progress and save tasks whenever tasks change
+  // Update progress and save tasks
   useEffect(() => {
     setProgress(calculateProgress(tasks));
     localStorage.setItem("tasks", JSON.stringify(tasks));
   }, [tasks]);
 
-  // 🎉 Trigger confetti if all tasks are already completed on page load
+  // Trigger confetti if all tasks done on first load
   useEffect(() => {
     const { completed, total } = calculateProgress(tasks);
-    if (total > 0 && completed === total) {
-      triggerConfetti();
-    }
-  }, []); // Run only once on mount
+    if (total > 0 && completed === total) triggerConfetti();
+  }, []);
 
-  // ➕ Add or Edit Task
+  // Handlers
   const handleAddTask = (e) => {
     e.preventDefault();
     if (editIndex !== null) {
-      const updated = tasks.map((t, i) =>
-        i === editIndex ? { ...t, text: editValue.trim() } : t
-      );
+      const updated = tasks.map((t, i) => i === editIndex ? { ...t, text: editValue.trim() } : t);
       setTasks(updated);
       setEditIndex(null);
       setEditValue("");
       setInput("");
       return;
     }
-
-    const newTasks = addTask(tasks, input);
+    const newTasks = addTask(tasks, input, priority, dueDate, category);
     if (newTasks.length === tasks.length) {
       alert("Please enter a valid task.");
       return;
@@ -112,51 +104,36 @@ export function useToDoListLogic() {
     setInput("");
   };
 
-  // ❌ Remove Task
   const handleRemoveTask = (idx) => {
     setTasks(removeTask(tasks, idx));
-    if (editIndex === idx) {
-      setEditIndex(null);
-      setEditValue("");
-    }
+    if (editIndex === idx) { setEditIndex(null); setEditValue(""); }
   };
 
-  // ✏️ Edit Task
   const handleEditTask = (idx) => {
     if (tasks[idx].completed) return;
     setEditIndex(idx);
     setEditValue(tasks[idx].text);
   };
 
-  // ✅ Toggle Complete + Trigger Confetti if All Done
   const handleToggleComplete = (idx) => {
     const updated = toggleTaskCompletion(tasks, idx);
     setTasks(updated);
-
     const { completed, total } = calculateProgress(updated);
-    if (total > 0 && completed === total) {
-      triggerConfetti();
-    }
+    if (total > 0 && completed === total) triggerConfetti();
   };
 
-  // Input Handlers
-  const handleInputChange = (e) => setInput(e.target.value);
-  const handleEditValueChange = (e) => setEditValue(e.target.value);
+  // Input handlers
+  const handleInputChange = e => setInput(e.target.value);
+  const handleEditValueChange = e => setEditValue(e.target.value);
+  const handlePriorityChange = e => setPriority(e.target.value);
+  const handleDueDateChange = e => setDueDate(e.target.value);
+  const handleCategoryChange = e => setCategory(e.target.value);
 
   return {
-    backgrounds,
-    index,
-    tasks,
-    input,
-    handleInputChange,
-    handleAddTask,
-    handleRemoveTask,
-    handleEditTask,
-    handleEditValueChange,
-    editIndex,
-    editValue,
-    handleToggleComplete,
-    isTaskListEmpty,
-    progress,
+    backgrounds, index, tasks, input, priority, dueDate, category,
+    handleInputChange, handleAddTask, handleRemoveTask, handleEditTask,
+    handleEditValueChange, handlePriorityChange, handleDueDateChange,
+    handleCategoryChange, editIndex, editValue, handleToggleComplete,
+    isTaskListEmpty, progress
   };
 }
